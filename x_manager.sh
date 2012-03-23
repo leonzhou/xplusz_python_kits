@@ -1,4 +1,32 @@
 #!/bin/bash
+initialize_files()
+{
+    # pip freeze -r xplusz-requirements.txt > requirements.txt
+    echo "==>Initializing requirements.txt ........"
+    pip freeze > dev_requirements.txt
+    cp ${lib_path}/ini_data/requirements_basic.txt ${app_path}/requirements.txt
+
+    # README
+    echo "==>Initializing README.md"
+    touch README.md
+
+    # Procfile
+    echo "==>Initializing Procfile"
+    touch Procfile
+    echo "web: python ${app_module_name}/manage.py run_gunicorn -b \"0.0.0.0:\$PORT\" -w 3" >> Procfile
+
+    # Enhance setting.py
+    sed '/INSTALLED_APPS/ a\
+    \    "gunicorn",
+    ' ${app_module_name}/settings.py >> ${app_module_name}/settings_tmp.py
+    rm ${app_module_name}/settings.py
+    mv ${app_module_name}/settings_tmp.py ${app_module_name}/settings.py
+
+    # Local setup script
+    echo "==>Locale environment setup"
+    cp ${lib_path}/ini_data/setup.sh ${app_path}/setup.sh
+}
+
 initialize_blank_project()
 {
     echo "?Application name:"
@@ -7,26 +35,28 @@ initialize_blank_project()
     read app_module_name
     app_path="${PWD}/${app_name}"
     app_module_path="${app_path}/${app_module_name}"
-    echo "App path=>${app_path"
+    echo "App path=>${app_path}"
     echo "App module path=>${app_module_path}"
 
     ## Initialize Django-Heroku project
-    mkdir ${app_path} && cd ${app_path}
-    virtualenv .ve --distribute
+    if [ -d ${app_path} ]; then
+        cd ${app_path}
+    else
+        mkdir ${app_path} && cd ${app_path}
+    fi
+    if [ ! -e .ve ]; then
+        virtualenv .ve --distribute
+    fi
     source .ve/bin/activate
     pip install Django psycopg2
-    #django-admin.py startproject ${app_module_name}
+    django-admin.py startproject ${app_module_name}
     chmod +x ${app_module_path}/manage.py
 
-    # pip freeze -r xplusz-requirements.txt > requirements.txt
-    echo "Initializing requirements.txt ........"
-    pip freeze -r ${lib_path}/ini_data/requirements_basic.txt > requirements.txt
+    # Initialize files
+    initialize_files
 
-    ## For github
-    echo "Initializing README.md"
-    touch README.md
-
-    django-admin.py startproject ${app_module_name}
+    # Execute Local setup
+    ./setup.sh
 }
 
 echo "=======Welcome to Xplusz Manager bash======="
