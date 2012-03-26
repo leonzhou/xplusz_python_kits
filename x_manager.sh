@@ -15,12 +15,17 @@ initialize_files()
     touch Procfile
     echo "web: python ${app_module_name}/manage.py run_gunicorn -b \"0.0.0.0:\$PORT\" -w 3" >> Procfile
 
+    # DB config
+    cp ${lib_path}/ini_data/pgurl.py ${app_module_path}/pgurl.py
+    sed -i "s/app_name/${app_name}/g" ${app_module_path}/pgurl.py
+
     # Enhance setting.py
-    sed '/INSTALLED_APPS/ a\
-    \    "gunicorn",
-    ' ${app_module_name}/settings.py >> ${app_module_name}/settings_tmp.py
-    rm ${app_module_name}/settings.py
-    mv ${app_module_name}/settings_tmp.py ${app_module_name}/settings.py
+    #sed '/INSTALLED_APPS/ a\
+    #\    "gunicorn",
+    #' ${app_module_name}/settings.py >> ${app_module_name}/settings_tmp.py
+    #rm ${app_module_name}/settings.py
+    #mv ${app_module_name}/settings_tmp.py ${app_module_name}/settings.py
+    cp ${lib_path}/ini_data/settings.py ${app_module_path}/settings.py
 
     # Local setup script
     echo "==>Locale environment setup"
@@ -62,7 +67,7 @@ initialize_blank_project()
 echo "=======Welcome to Xplusz Manager bash======="
 lib_path="${PWD}/`dirname $0`"
 echo "Work path===>${PWD}"
-echo "SDK path==>${lib_path}"
+echo "Kit path==>${lib_path}"
 echo "==========Please make a choice========"
 echo "1: Initialize blank Django-Heroku project?"
 read type
