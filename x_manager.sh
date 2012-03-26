@@ -17,7 +17,7 @@ initialize_files()
 
     # DB config
     cp ${lib_path}/ini_data/pgurl.py ${app_module_path}/pgurl.py
-    sed -i "s/app_name/${app_name}/g" ${app_module_path}/pgurl.py
+    sed -ie "s/app_name/${app_name}/g" ${app_module_path}/pgurl.py
 
     # Enhance setting.py
     #sed '/INSTALLED_APPS/ a\
