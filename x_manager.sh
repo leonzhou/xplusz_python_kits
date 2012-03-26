@@ -61,7 +61,7 @@ initialize_blank_project()
     initialize_files
 
     # Execute Local setup
-    ./setup.sh
+    #./setup.sh
 }
 
 echo "=======Welcome to Xplusz Manager bash======="

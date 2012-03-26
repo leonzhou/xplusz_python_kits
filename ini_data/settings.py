@@ -1,4 +1,6 @@
 # Django settings for backend project.
+import pgurl, os
+# Django settings for backend project.
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
