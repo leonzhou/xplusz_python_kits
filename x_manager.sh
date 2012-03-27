@@ -20,12 +20,17 @@ initialize_files()
     sed -ie "s/app_name/${app_name}/g" ${app_module_path}/pgurl.py
 
     # Enhance setting.py
-    #sed '/INSTALLED_APPS/ a\
-    #\    "gunicorn",
-    #' ${app_module_name}/settings.py >> ${app_module_name}/settings_tmp.py
-    #rm ${app_module_name}/settings.py
-    #mv ${app_module_name}/settings_tmp.py ${app_module_name}/settings.py
-    cp ${lib_path}/ini_data/settings.py ${app_module_path}/settings.py
+    ## Module
+    sed '/INSTALLED_APPS/ a\
+    \    "gunicorn",
+    ' ${app_module_name}/settings.py >> ${app_module_name}/settings_tmp.py
+    rm ${app_module_name}/settings.py
+    mv ${app_module_name}/settings_tmp.py ${app_module_name}/settings.py
+    #cp ${lib_path}/ini_data/settings.py ${app_module_path}/settings.py
+    ## DB config
+    #sed -ie "s/DATABASES = {\n.*\n.*\n.*\n.*\n.*\n.*\n.*\n.*\n}/DATABASES = pgurl.get_db_settings()/g" ${app_module_path}/settings.py
+
+    rm ${app_module_path}/*.pye
 
     # Local setup script
     echo "==>Locale environment setup"
@@ -53,7 +58,7 @@ initialize_blank_project()
         virtualenv .ve --distribute
     fi
     source .ve/bin/activate
-    pip install Django psycopg2
+    pip install Django==1.3.1 psycopg2
     django-admin.py startproject ${app_module_name}
     chmod +x ${app_module_path}/manage.py
 
