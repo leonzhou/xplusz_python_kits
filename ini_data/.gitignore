@@ -1,0 +1,12 @@
+.ve
+.Python
+.idea
+*.pyc
+*.DS_Store
+*.log
+*1
+*.pid
+*.err
+*.out
+*.jtl
+*.hprof
